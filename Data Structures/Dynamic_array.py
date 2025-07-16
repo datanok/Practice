@@ -13,7 +13,6 @@ class DynamicArray:
         """
         # TODO: Initialize the dynamic array
         # Hint: You'll need to track capacity, size, and the actual data
-        pass
         self.capacity = initial_capacity
         self.arr = [None] * initial_capacity
         self.size = 0
@@ -40,7 +39,7 @@ class DynamicArray:
         Raises:
             IndexError: If index is out of bounds
         """
-        if self.size < index -1:
+        if index < 0 or index >= self.size:
             raise IndexError("Index out of Bounds")
         return self.arr[index]
     
@@ -55,7 +54,7 @@ class DynamicArray:
         Raises:
             IndexError: If index is out of bounds
         """
-        if self.size < index - 1:
+        if index < 0 or self.size <= index:
             raise IndexError("Index out of Bounds")
         self.arr[index] = value
     
@@ -83,9 +82,11 @@ class DynamicArray:
         Raises:
             IndexError: If index is out of bounds
         """
-        if self.size < index - 1:
+        if index < 0 or self.size < index:
             raise IndexError("Index out of Bounds")
-        for i in range(index,0,-1):
+        if self.size >= self.getCapacity():
+            self._resize()
+        for i in range(self.size-1,index-1,-1):
             self.arr[i+1] = self.arr[i]
         self.arr[index] = item
         self.size += 1
@@ -105,12 +106,15 @@ class DynamicArray:
         # TODO: Implement remove operation
         # Hint: Find the item, then shift elements left
         for i in range(self.size):
-            print(self.arr[i],item,"ho")
             if self.arr[i] == item:
-                for j in range(self.size):
+        
+                for j in range(i,self.size-1):
                     self.arr[j] = self.arr[j+1]
+            
+                self.arr[self.size-1] = None
                 self.size -= 1
-        print("Element Not found")
+                return True
+        raise ValueError("Element Not found")
 
     
     def pop(self, index=-1):
@@ -126,11 +130,17 @@ class DynamicArray:
         Raises:
             IndexError: If index is out of bounds or array is empty
         """
-        if index > self.size:
+        if index > self.size or self.size < 1:
             raise IndexError("Index is out of bounds")
+        popped_item = None
         if index == -1:
-            self.arr[size] = None
-        return self.arr[index]
+            popped_item = self.arr[self.size-1]
+            self.arr[self.size-1] = None
+        else:
+            popped_item = self.arr[index]
+            self.arr[index] = None
+        self.size -= 1
+        return popped_item
 
         
 
@@ -300,7 +310,58 @@ def test_dynamic_array():
     assert mixed_arr[1] == "hello", "Should store strings"
     assert mixed_arr[3] == {"key": "value"}, "Should store dictionaries"
     print("✓ Test 14 passed: Mixed data types")
-    
+
+    arr = DynamicArray()
+    arr.append(1)
+    arr.append(2)
+    arr.append(3)
+
+    arr.remove(2)  # Should shift 3 left and size should reduce
+
+    # ✅ Expect arr[2] to be None or inaccessible
+    assert len(arr) == 2
+    try:
+        _ = arr[2]  # ❌ This will raise IndexError in current implementation
+        assert False, "Expected IndexError after removing and accessing out-of-bounds index"
+    except IndexError:
+        pass  # ✅ Correct
+    print("✓ Test 15 passed: Edge case")
+
+    arr = DynamicArray()
+    arr.append(10)
+    arr.append(20)
+    arr.append(30)
+
+    arr.remove(20)  # Remove middle element
+
+    # Expected internal array: [10, 30, None, None]
+    # Actual internal array (with bug): [10, 30, 30, None] ← bug: stale value
+
+    assert arr[0] == 10
+    assert arr[1] == 30
+    assert len(arr) == 2
+
+    # 🔍 Now check internal array manually
+    expected = [10, 30, None, None]
+    assert arr.arr[:4] == expected, f"❌ remove() left stale value: got {arr.arr[:4]}, expected {expected}"
+
+    print("✓ Test passed: remove() shifts correctly and clears stale memory")
+
+    arr = DynamicArray()
+    arr.append(1)
+    arr.append(2)
+    arr.append(3)
+    arr.append(4)
+
+    arr.remove(3)  # Removes the third element (index 2)
+    print(arr,"arr")
+    # Now internal array should be [1, 2, 4, None]
+    expected = [1, 2, 4, None]
+    actual = arr.arr[:4]
+    assert actual == expected, f"❌ Failed: expected {expected}, got {actual}"
+
+    print("✓ remove() test with multiple shifts passed")
+
     print("\nAll tests passed! Your Dynamic Array implementation is working correctly.")
 
 

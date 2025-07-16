@@ -1,3 +1,5 @@
+from Dynamic_array import DynamicArray #using Dynamic Array i created
+
 class Stack:
     """
     A Stack implementation using a list as the underlying data structure.
@@ -7,7 +9,7 @@ class Stack:
     def __init__(self):
         """Initialize an empty stack."""
         # TODO: Initialize the stack data structure
-        self.array = []
+        self.array = DynamicArray()
         self.top = -1
 
     
@@ -161,6 +163,5 @@ def test_stack():
 
 
 if __name__ == "__main__":
-    # Uncomment the line below once you've implemented the Stack class
     test_stack()
     print("Complete the Stack implementation above, then uncomment test_stack() to run the tests!")
