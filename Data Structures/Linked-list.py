@@ -360,12 +360,12 @@ class LinkedList:
         prev = None
         self.tail = self.head
         while curr:
-            next = curr.next
+            next_node = curr.next
 
             curr.next = prev
 
             prev = curr
-            curr = next
+            curr = next_node
         self.head = prev
 
     

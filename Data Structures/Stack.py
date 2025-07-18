@@ -34,6 +34,7 @@ class Stack:
             IndexError: If the stack is empty
         """
         if self.top < 0:
+            print("yo")
             raise IndexError("Stack is already empty")
         pop = self.array.pop()
         self.top -= 1
@@ -61,7 +62,6 @@ class Stack:
         Returns:
             bool: True if stack is empty, False otherwise
         """
-        print(self.array,"hi")
         if len(self.array) <= 0:
             return True
         else:
@@ -158,6 +158,17 @@ def test_stack():
     assert stack_mixed.size() == 4, "Stack should handle mixed data types"
     assert stack_mixed.peek() == {"key": "value"}, "Top should be the dictionary"
     print("✓ Test 9 passed: Mixed data types")
+
+
+    #reverse string using stack
+    inp_string = input("Enter String")
+    stack  = DynamicArray()
+    inp_string = list(inp_string)
+    for i in inp_string:
+        stack.append(i)
+    for i in range(len(inp_string)):
+        inp_string[i] = stack.pop()
+    print(inp_string,"reversed")
     
     print("\nAll tests passed! Your Stack implementation is working correctly.")
 
