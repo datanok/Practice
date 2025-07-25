@@ -51,14 +51,15 @@ class StackProblems:
         # TODO: Implement next greater element logic
         # Hint: Use stack to store indices, not values
         # Process array left to right, pop indices when current element is greater
-        res = []
+        res = [-1] * len(nums)
+        
+        numToIdx = { n:i for i,n in enumerate(nums)}
         for i  in range(len(nums)):
-            max = -1
-            for j in range(i+1,len(nums)):
-                if nums[i] < nums[j]:
-                    max = nums[j]
-                    break;
-            res.append(max)
+            while not self.stack.is_empty() and (self.stack.peek() < nums[i]):
+                ele = self.stack.pop()
+                idx = numToIdx[ele]
+                res[idx] = nums[i]
+            self.stack.push(nums[i])
         return res
   
     def evaluate_postfix(self, expression):
@@ -83,14 +84,20 @@ class StackProblems:
                 self.stack.push(calc(i,op1,op2))
 
         return int(self.stack.peek())
-                
-    
+                 
     def daily_temperatures(self, temperatures):
         """Problem 6: Days until warmer temperature"""
         self.clear_stack()
-        # TODO: Implement daily temperatures logic
-        pass
-    
+        res = [0] * len(temperatures)
+        for i,temp in enumerate(temperatures):
+            while not self.stack.is_empty() and self.stack.peek()[0] < temp:
+                stackTemp, stackIdx = self.stack.pop()
+                days  = i - stackIdx
+                res[stackIdx] = days
+            self.stack.push([temp,i])
+        return res            
+            
+               
     def valid_parentheses_simple(self, s):
         """Problem 7: Check if string has valid parentheses (only '(' and ')')"""
         self.clear_stack()
@@ -100,19 +107,42 @@ class StackProblems:
             if i in map:
                 self.stack.push(i)
         return (self.stack.size() * 2 ) == len(s)
-
-    
+   
     def baseball_game(self, operations):
         """Problem 8: Calculate baseball game score"""
         self.clear_stack()
-        # TODO: Implement baseball game scoring
-        pass
+        for op in operations:
+            if op == '+':
+                self.stack.push(self.stack.peekFromEnd(1)+self.stack.peekFromEnd(2))
+            elif op == "D":
+                res = self.stack.peek() * 2
+                self.stack.push(res)
+            elif op == "C":
+                self.stack.pop()
+            else:
+                self.stack.push(int(op))
+            
+        return sum(self.stack.getArray())
+
+
     
     def remove_k_digits(self, num, k):
         """Problem 9: Remove k digits to make smallest number"""
         self.clear_stack()
         # TODO: Implement k digits removal
-        pass
+        for digit in num:
+            while not self.stack.is_empty() and k>0 and self.stack.peek() > digit :
+                self.stack.pop()
+                k-=1
+            self.stack.push(digit)
+        while k>0:
+            self.stack.pop()
+            k -=1 
+        result = ''.join(self.stack.getArray()).lstrip("0")
+        return result if result else "0"
+
+
+
     
     def largest_rectangle_histogram(self, heights):
         """Problem 10: Find largest rectangle area in histogram"""

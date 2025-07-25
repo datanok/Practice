@@ -34,7 +34,6 @@ class Stack:
             IndexError: If the stack is empty
         """
         if self.top < 0:
-            print("yo")
             raise IndexError("Stack is already empty")
         pop = self.array.pop()
         self.top -= 1
@@ -53,6 +52,13 @@ class Stack:
         if self.top < 0:
              raise IndexError("Stack is empty")
         return self.array[self.top]
+    
+    def peekFromEnd(self,idx):
+        print(idx,"idx")
+
+        print(self.size() - idx)
+
+        return self.array[self.size() - idx]
         
     
     def is_empty(self):
@@ -75,6 +81,8 @@ class Stack:
             int: Number of items in the stack
         """
         return self.top + 1
+    def getArray(self):
+        return list(self.array)
     
     def __str__(self):
         """
@@ -87,6 +95,7 @@ class Stack:
         # Hint: Show the stack with top element on the right
         
         return str(self.array)
+    
 
 
 # Test cases for your Stack implementation
