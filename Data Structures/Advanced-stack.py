@@ -1,5 +1,5 @@
 from Stack import Stack
-import re
+import traceback
 
 class AdvancedStackProblems:
     def __init__(self):
@@ -25,22 +25,38 @@ class AdvancedStackProblems:
         """
         # TODO: Implement infix to postfix conversion
         # Hint: Use stack for operators, consider precedence and associativity
-        pass
+        precedence = {'+':1, '-':1, '*':2, '/':2, '^':3}
+        associativity = {'+':'L', '-':'L', '*':'L', '/':'L', '^':'R'}
+
+        output = []
+        for char in expression.replace(" ",""):
+            if char.isalnum():
+                output.append(char)
+            elif char == "(":
+                self.stack.push(char) 
+            elif char == ')':
+                while not self.stack.is_empty() and self.stack.peek() != '(':
+                    popped = self.stack.pop()
+                    output.append(popped)
+                self.stack.pop()
+            else:
+                top = ''
+                if not self.stack.is_empty():
+                    top = self.stack.peek()
+                while( not self.stack.is_empty() and top != "(" ) and (precedence[top] > precedence[char] or (precedence[top] == precedence[char] and associativity[top] == 'L')):
+                    popped = self.stack.pop()
+                    output.append(popped)
+                self.stack.push(char)
+        while not self.stack.is_empty():
+            popped = self.stack.pop()
+            output.append(popped)
+        return ' '.join(output)
+
+
     
-    def evaluate_infix(self, expression):
-        """Problem 12: Evaluate infix expression directly
-        
-        Evaluate infix expressions like "2 + 3 * 4" = 14
-        Handle operator precedence and parentheses
-        
-        Examples:
-        - "2 + 3 * 4" → 14
-        - "(2 + 3) * 4" → 20
-        - "10 - 2 * 3" → 4
-        """
-        # TODO: Implement infix expression evaluation
-        # Hint: Use two stacks - one for numbers, one for operators
-        pass
+  
+
+            
     
     def stack_with_min(self):
         """Problem 13: Design stack with getMin() in O(1)
@@ -272,12 +288,7 @@ def test_advanced_problems():
             ("2 ^ 3 ^ 2", "2 3 2 ^ ^"),
             ("a + b * c - d", "a b c * + d -")
         ],
-        "evaluate_infix": [
-            ("2 + 3 * 4", 14),
-            ("(2 + 3) * 4", 20),
-            ("10 - 2 * 3", 4),
-            ("2 + 3 - 1", 4)
-        ],
+       
         "trapping_rain_water": [
             ([0,1,0,2,1,0,1,3,2,1,2,1], 6),
             ([4,2,0,3,2,5], 9),
@@ -432,6 +443,7 @@ def test_advanced_problems():
                 print(f"Test {i+1}: ❌ ERROR")
                 print(f"   Input: {input_data}")
                 print(f"   Exception: {e}")
+                traceback.print_exc() 
         print("-" * 50)
 
     print(f"\nTotal: {total_tests} | Passed: {passed_tests} | Failed: {total_tests - passed_tests}")

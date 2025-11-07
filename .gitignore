@@ -1,0 +1,14 @@
+# Ignore all node_modules folders
+**/node_modules/
+
+# Ignore Python cache and virtual environments
+**/__pycache__/
+**/.venv/
+**/venv/
+
+# Ignore environment files
+*.env
+
+# Ignore other temporary files
+.DS_Store
+*.log
